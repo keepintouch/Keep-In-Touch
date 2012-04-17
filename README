@@ -1,0 +1,28 @@
+ _   __                  _____         _____                _     
+| | / /                 |_   _|       |_   _|              | |    
+| |/ /  ___  ___ _ __     | |  _ __     | | ___  _   _  ___| |__  
+|    \ / _ \/ _ \ '_ \    | | | '_ \    | |/ _ \| | | |/ __| '_ \ 
+| |\  \  __/  __/ |_) |  _| |_| | | |   | | (_) | |_| | (__| | | |
+\_| \_/\___|\___| .__/   \___/|_| |_|   \_/\___/ \__,_|\___|_| |_|
+                | |                                               
+                |_|                                               
+
+Craig Hynes
+Rutgers University
+Dr. Sunil Shende
+
+There are a number of location tracking services are currently available to mobile phone users, including Google Latitude, Apple Find My Friend, Foursquare, and Gowalla to name a few. These services provide the user with the ability to capture their location (via GPS, WiFi networks, and cellular towers) and store their
+location on a central server which they can then allow others to view.
+
+The main drawback to these services is that the location and personal data which is stored by these companies is not fully protected. Most of the service providers use some form of encryption to transmit the data from the user's mobile device to their server, but after that the data is left sitting vulnerable on some server. The data is vulnerable to being looked at by either employees of the company or intruders that break into the system.
+
+This project was started to create an open-source location tracking system that would overcome the vulnerability of unsecured data sitting on a server.  The main concept for securing the data on the server is to encrypt it before it ever leaves the mobile device. All of the data (location, personal information, etc) would be encrypted directly on the device and then transmitted to the server and stored on the server in its encrypted form. This protects the location and personal data stored on the server from being looked at by anyone other than those with the decryption key.
+
+--------------------------------------------------------------------------------
+
+This project contains two components:
+Server:
+  The server component is a PHP script that uses a MySQL server to store it's data.  The PHP script is responsible for handling the communications between the different clients of the server.
+
+Client:
+  The client component is an Android application which uses a device's GPS to obtain a location of the user and then send that information back to the server.
