@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/background_cross"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+     <LinearLayout
+        android:id="@+id/title_area"
+        style="@style/TitleBar" >
+       				
+       <ImageView style="@style/TitleBarLogo"
+       			  android:id="@+id/img1"	 			
+                  android:src="@drawable/ic_kit"
+                  android:onClick="onHome" 
+            	  android:layout_gravity="center" 
+            	  android:paddingLeft="5dip" 
+            	  android:paddingRight="5dip"/>
+       			   
+        <TextView
+            android:id="@+id/tv1"
+            style="@style/TitleBarText"
+            android:text="@string/screen_map" />
+
+        <ImageView android:layout_width="1px"
+        	android:layout_height="fill_parent"	
+        	android:id="@+id/sep1"
+			android:background="@drawable/ic_separator" />
+
+       <ImageView
+           android:id="@+id/map_menu_friend"
+           style="@style/TitleBarLogo"
+           android:onClick="onFriends" 
+           android:paddingLeft="8dip" 
+           android:paddingRight="8dip"
+           android:src="@drawable/ic_friends" />
+        
+       <ImageView android:layout_width="1px"
+        		   android:layout_height="fill_parent"	
+        		   android:id="@+id/sep1"
+			       android:background="@drawable/ic_separator" />
+
+       <ImageView
+           android:id="@+id/map_menu_mapmode"
+           style="@style/TitleBarLogo"
+           android:onClick="onSatellite" 
+           android:paddingLeft="8dip" 
+           android:paddingRight="8dip"
+           android:src="@drawable/ic_mapmode" />
+
+              <ImageView android:layout_width="1px"
+        		   android:layout_height="fill_parent"	
+        		   android:id="@+id/sep2"
+			       android:background="@drawable/ic_separator" />
+
+       <ImageView
+           android:id="@+id/map_menu_mylocation"
+           style="@style/TitleBarLogo"
+           android:onClick="onMyLocation" 
+           android:paddingLeft="8dip" 
+           android:paddingRight="8dip"
+           android:src="@drawable/ic_mylocation" />
+        
+    </LinearLayout> 
+  <TextView android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:text="Waiting for location..."
+    android:id="@+id/lblLocationInfo"/>
+      
+  <com.google.android.maps.MapView
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      android:id="@+id/mapview"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:clickable="true"
+      android:apiKey="INSERT_YOUR_GOOGLE_MAPS_API_KEY_HERE"/>
+
+</LinearLayout>

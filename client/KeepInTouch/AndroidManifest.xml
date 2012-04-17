@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="app.master.kit"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk android:minSdkVersion="8" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_LOGS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.Black.NoTitleBar" >
+        <activity
+            android:label="@string/app_name"
+            android:name=".MainActivity"
+            android:configChanges="keyboardHidden|orientation">
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:label="Preferences"
+            android:name=".PreferencesActivity"
+            android:configChanges="keyboardHidden|orientation">
+        </activity>
+         <activity
+            android:label="FriendRequest"
+            android:name=".FriendRequestActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:configChanges="keyboardHidden|orientation">
+        </activity>
+        <activity
+            android:label="FriendRequestReceived"
+            android:name=".FriendRequestReceivedActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:configChanges="keyboardHidden|orientation">
+        </activity>
+        <activity
+            android:label="Friends"
+            android:name=".FriendsActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:configChanges="keyboardHidden|orientation">
+        </activity>
+        <activity
+            android:label="History"
+            android:name=".HistoryActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:configChanges="keyboardHidden|orientation">
+        </activity>    
+        <activity
+            android:label="Map"
+            android:name=".LocationMapActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:configChanges="keyboardHidden|orientation">
+        </activity>
+        <activity
+            android:label="Favorites"
+            android:name=".FavoritesActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:configChanges="keyboardHidden|orientation">
+        </activity>
+        <activity
+            android:label="Help"
+            android:name=".HelpActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:configChanges="keyboardHidden|orientation">
+        </activity>
+        <activity
+            android:label="Log"
+            android:name=".LogActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:configChanges="keyboardHidden|orientation">
+        </activity>
+        <uses-library android:name="com.google.android.maps" />
+        <receiver android:name="Alarm"></receiver>
+        <receiver android:name="BroadcastStartupReceiver">
+        <intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED" />
+            <action android:name="app.master.custom.intent.action.STARTALARM" />
+            <action android:name="app.master.custom.intent.action.CANCELALARM" />
+            <action android:name="app.master.custom.intent.action.STARTSERVICE" />
+            <category android:name="android.intent.category.HOME" />
+        </intent-filter>
+        </receiver>
+        <service android:name=".PollService">
+        <intent-filter>
+            <action android:name=".UpdateService" />
+        </intent-filter>
+        </service>
+    </application>
+</manifest>

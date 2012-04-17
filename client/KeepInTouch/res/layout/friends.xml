@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background_cross"
+    android:orientation="vertical" >
+    <LinearLayout
+        android:id="@+id/title_area"
+        style="@style/TitleBar" >
+       				
+       <ImageView style="@style/TitleBarLogo"
+       			  android:id="@+id/img1"	 			
+                  android:src="@drawable/ic_kit"
+                  android:onClick="onHome" 
+            	  android:layout_gravity="center" 
+            	  android:paddingLeft="5dip" 
+            	  android:paddingRight="5dip"/>
+       			   
+        <TextView
+            android:id="@+id/tv1"
+            style="@style/TitleBarText"
+            android:text="@string/screen_friends" />
+
+       <ImageView android:layout_width="1px"
+        		   android:layout_height="fill_parent"	
+        		   android:id="@+id/sep1"
+			       android:background="@drawable/ic_separator" />
+
+       <ImageView
+           android:id="@+id/friend_send_request"
+           style="@style/TitleBarLogo"
+           android:onClick="onAddFriend" 
+           android:paddingLeft="8dip" 
+           android:paddingRight="8dip"
+           android:src="@drawable/ic_friend_add" />
+
+       <ImageView android:layout_width="1px"
+        		   android:layout_height="fill_parent"	
+        		   android:id="@+id/sep2"
+			       android:background="@drawable/ic_separator" />
+
+       <ImageView
+           android:id="@+id/friend_receive_request"
+           style="@style/TitleBarLogo"
+           android:onClick="onViewFriendRequests" 
+           android:paddingLeft="8dip" 
+           android:paddingRight="8dip"
+           android:src="@drawable/ic_friend_msg" />
+        
+       <ImageView android:layout_width="1px"
+        		   android:layout_height="fill_parent"	
+        		   android:id="@+id/sep3"
+			       android:background="@drawable/ic_separator" />
+
+       <ImageView
+           android:id="@+id/friend_refresh_img"
+           style="@style/TitleBarLogo"
+           android:onClick="onRefresh" 
+           android:paddingLeft="8dip" 
+           android:paddingRight="8dip"
+           android:src="@drawable/ic_refresh" />
+        
+    </LinearLayout>
+    
+    <ListView
+        android:id="@+id/friends_allfriends_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+
+</LinearLayout>

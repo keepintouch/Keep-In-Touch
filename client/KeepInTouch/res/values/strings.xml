@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Keep In Touch</string>
+    <string name="screen_friends">KIT - Friends</string>
+    <string name="screen_friendsrequest">KIT - Friends Request</string>
+    <string name="screen_friendsrequestreceived">KIT - Friends Request Received</string>
+    <string name="screen_history">KIT - History</string>
+    <string name="screen_map">KIT - Map</string>
+    <string name="screen_preferences">KIT - Preferences</string>    
+    <string name="screen_pois">KIT - Favorites</string>
+    <string name="screen_help">KIT - Help</string>    
+    <string name="screen_log">KIT - Log</string>    
+    <string name="friends">Friends</string>
+    <string name="mylocation">My Location</string>
+    <string name="pois">POIs</string>
+    <string name="help">Help</string>
+    <string name="PollFriends">Poll Friends</string>
+    <string name="UpdateMyLocation">Update My Location</string>
+    <string name="SendRequest">Send Friend Request</string>
+    <string name="ViewRequests">View Friend Requests</string>
+    <string name="NearMe">Show Friends Near Me</string>
+    <string name="MyHistory">My History</string>
+    <string name="ShowHistory">Show History</string>
+    <string name="ShowMembers">Show Members</string>
+    <string name="preferences">Preferences</string>
+    <string name="alert_dialog_ok">OK</string>
+    <string name="alert_dialog_cancel">Cancel</string>
+</resources>
