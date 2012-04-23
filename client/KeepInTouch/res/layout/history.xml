@@ -21,20 +21,7 @@
             android:id="@+id/tv1"
             style="@style/TitleBarText"
             android:text="@string/screen_history" />
-        
-       <ImageView android:layout_width="1px"
-        		   android:layout_height="fill_parent"	
-        		   android:id="@+id/sep1"
-			       android:background="@drawable/ic_separator" />
 
-       <ImageView
-           android:id="@+id/ImageView01"
-           style="@style/TitleBarLogo"
-           android:onClick="onRefresh" 
-           android:paddingLeft="8dip" 
-           android:paddingRight="8dip"
-           android:src="@drawable/ic_refresh" />
-        
     </LinearLayout>
     <Spinner
         android:id="@+id/spnHistoryName"

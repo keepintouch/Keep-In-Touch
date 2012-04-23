@@ -12,7 +12,7 @@
     <string name="screen_help">KIT - Help</string>    
     <string name="screen_log">KIT - Log</string>    
     <string name="friends">Friends</string>
-    <string name="mylocation">My Location</string>
+    <string name="map">Map</string>
     <string name="pois">POIs</string>
     <string name="help">Help</string>
     <string name="PollFriends">Poll Friends</string>
