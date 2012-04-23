@@ -75,11 +75,12 @@ public class PollService extends Service {
 					CharSequence tickerText = "Friend Request from "+RequesterName;;
 					long when = System.currentTimeMillis();
 					Notification notification = new Notification(icon, tickerText, when);
+					notification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
 					Context context = getApplicationContext();
 					CharSequence contentTitle = this.getString(R.string.app_name);
 					CharSequence contentText = tickerText;
 					Intent notificationIntent = new Intent(this, FriendRequestReceivedActivity.class);
-					PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+					PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 					notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
 					mNotificationManager.notify(NOTIFY_ID, notification);
 					NOTIFY_ID++;

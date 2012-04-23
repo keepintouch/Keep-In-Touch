@@ -171,6 +171,9 @@ public class LocationMapActivity extends MapActivity implements LocationListener
 
 		myLocationOverlay = new MyLocationOverlay(this, map);
 		map.getOverlays().add(myLocationOverlay);
+		
+		map.setSatellite(satellite_view);
+		
 		map.postInvalidate();
 	}
 
