@@ -287,60 +287,72 @@
           $option_memberid = $entry["memberid"];
           $option_starttime = $entry["starttime"];
           $option_endtime = $entry["endtime"];
-          $qF = @mysql_query("SELECT AllowHistory FROM Friends WHERE (MemberID=\"".mysql_real_escape_string($member_id)."\" AND RequesterID=\"".mysql_real_escape_string($option_memberid)."\") OR (MemberID=\"".mysql_real_escape_string($option_memberid)."\" AND RequesterID=\"".mysql_real_escape_string($member_id)."\")");
-          if ($qF)
+
+          $okay_to_view_history = 0;
+          if (strcmp($option_memberid, $member_id) == 0)
+          { $okay_to_view_history = 1; }
+          else
           {
-            if (mysql_num_rows($qF) > 0) // We have a friend relationship, continue
+            $qF = @mysql_query("SELECT AllowHistory FROM Friends WHERE (MemberID=\"".mysql_real_escape_string($member_id)."\" AND RequesterID=\"".mysql_real_escape_string($option_memberid)."\") OR (MemberID=\"".mysql_real_escape_string($option_memberid)."\" AND RequesterID=\"".mysql_real_escape_string($member_id)."\")");
+            if ($qF)
             {
-              $rsF = mysql_fetch_assoc($qF);
-              if ($rsF['AllowHistory'] == "Y")
+              if (mysql_num_rows($qF) > 0) // We have a friend relationship, continue
               {
-                $q = @mysql_query("SELECT ID FROM Members WHERE ID=\"".mysql_real_escape_string($option_memberid)."\"");
-                if ($q)
+                $rsF = mysql_fetch_assoc($qF);
+                if ($rsF['AllowHistory'] == "Y")
                 {
-                  if (mysql_num_rows($q) > 0)
-                  {
-                    $q = @mysql_query("SELECT Datetime, Encryption, LatLong, LocationType FROM Locations WHERE MemberID=\"".mysql_real_escape_string($option_memberid)."\" AND Datetime>=".mysql_real_escape_string($option_starttime)." AND Datetime<=".mysql_real_escape_string($option_endtime)." ORDER BY Datetime DESC");
-                    if ($q)
-                    {
-                      while($rs = mysql_fetch_assoc($q))
-                      {
-                        $jsonOutgoing->append(array("cmd"=>"query_history_response",
-                                                    "datetime"=>$rs['Datetime'],
-                                                    "encryption"=>$rs['Encryption'],
-                                                    "latlon"=>$rs['LatLong'],
-                                                    "locationtype"=>$rs['LocationType']
-                                                    ));
-                      }
-                      $jsonOutgoing->append(array("response"=>"1","msg"=>"History Request Successful"));
-                    }
-                    else
-                    { $jsonOutgoing->append(array("response"=>"0","msg"=>"History Request Failed - Database Problem")); }
-                  }
-                  else
-                  {
-                    // Nothing to return, but still okay
-                    $jsonOutgoing->append(array("response"=>"1","msg"=>"History Request Successful"));
-                  }
+                   $okay_to_view_history = 1;
                 }
                 else
                 {
-                  $jsonOutgoing->append(array("response"=>"0","msg"=>"History Request Failed - No Friends with that ID"));
+                  $jsonOutgoing->append(array("response"=>"0","msg"=>"History Request Failed - Friend Doesn't Allow History Viewing"));
                 }
               }
               else
               {
-                $jsonOutgoing->append(array("response"=>"0","msg"=>"History Request Failed - Friend Doesn't Allow History Viewing"));
+                $jsonOutgoing->append(array("response"=>"0","msg"=>"History Request Failed - No Friend Relationship"));
               }
             }
             else
             {
-              $jsonOutgoing->append(array("response"=>"0","msg"=>"History Request Failed - No Friend Relationship"));
+              $jsonOutgoing->append(array("response"=>"0","msg"=>"History Request Failed - Friend Relationship Lookup Failed"));
             }
           }
-          else
+
+          if ($okay_to_view_history == 1)
           {
-            $jsonOutgoing->append(array("response"=>"0","msg"=>"History Request Failed - Friend Relationship Lookup Failed"));
+            $q = @mysql_query("SELECT ID FROM Members WHERE ID=\"".mysql_real_escape_string($option_memberid)."\"");
+            if ($q)
+            {
+              if (mysql_num_rows($q) > 0)
+              {
+                $q = @mysql_query("SELECT Datetime, Encryption, LatLong, LocationType FROM Locations WHERE MemberID=\"".mysql_real_escape_string($option_memberid)."\" AND Datetime>=".mysql_real_escape_string($option_starttime)." AND Datetime<=".mysql_real_escape_string($option_endtime)." ORDER BY Datetime DESC");
+                if ($q)
+                {
+                  while($rs = mysql_fetch_assoc($q))
+                  {
+                    $jsonOutgoing->append(array("cmd"=>"query_history_response",
+                                                "datetime"=>$rs['Datetime'],
+                                                "encryption"=>$rs['Encryption'],
+                                                "latlon"=>$rs['LatLong'],
+                                                "locationtype"=>$rs['LocationType']
+                                                ));
+                  }
+                  $jsonOutgoing->append(array("response"=>"1","msg"=>"History Request Successful"));
+                }
+                else
+                { $jsonOutgoing->append(array("response"=>"0","msg"=>"History Request Failed - Database Problem")); }
+              }
+              else
+              {
+                // Nothing to return, but still okay
+                $jsonOutgoing->append(array("response"=>"1","msg"=>"History Request Successful"));
+              }
+            }
+            else
+            {
+              $jsonOutgoing->append(array("response"=>"0","msg"=>"History Request Failed - No Friends with that ID"));
+            }
           }
         }
       }
@@ -649,7 +661,6 @@
   print $jsonOutgoing->getString();
 
   // For testing:
-  // (turn on debug mode first)
   // https://server.name.here/kit/index.php?data=[{"cmd":"query_location","id":"SECURE_ID_HERE"}]
   @mysql_close($connection);
 ?>
