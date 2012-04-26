@@ -72,7 +72,6 @@
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:clickable="true"
-      android:apiKey="0T8xIOnCcvFyCcMsMTXwRMk4d3x8daSELG9zorA"/>
-    <!-- android:apiKey="0T8xIOnCcvFxOfKX0boLp0Fb9EGZlL8H92X3_kw" -->
+      android:apiKey="INSERT_YOUR_GOOGLE_MAPS_API_KEY_HERE"/>
 
 </LinearLayout>
