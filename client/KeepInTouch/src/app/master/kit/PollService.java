@@ -55,9 +55,12 @@ public class PollService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		// Commands: UPDATE_AND_POLL, UPDATE, POLL
 		CMD = "UPDATE_AND_POLL"; // Default Command
-		if (intent.getExtras() != null) {
+		try {
 			CMD = intent.getStringExtra("CMD");
-		    if (CMD == null) { CMD = "UPDATE_AND_POLL"; }; // Default Command
+			if (CMD == null) { CMD = "UPDATE_AND_POLL"; }; // Default Command
+		}
+		catch (NullPointerException e) {
+			CMD = "UPDATE_AND_POLL";
 		}
 		//Toast.makeText(this, "Service Started - "+CMD, Toast.LENGTH_LONG).show();
 		PollServer();
