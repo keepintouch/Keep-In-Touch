@@ -1,10 +1,13 @@
 package app.master.kit;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,6 +22,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -36,9 +40,26 @@ public class HistoryActivity extends KeepInTouchActivity implements OnClickListe
 	private String date_array[];
 	private ListView history;
 	private ProgressDialog dialog;
+	private Button setDate;
+    private int mYear;
+    private int mMonth;
+    private int mDay;
 	private boolean cancelHistory = false;
 	GetGeocode geo;
 
+    private DatePickerDialog.OnDateSetListener mDateSetListener =
+            new DatePickerDialog.OnDateSetListener() {
+
+                public void onDateSet(DatePicker view, int year, 
+                                      int monthOfYear, int dayOfMonth) {
+                    mYear = year;
+                    mMonth = monthOfYear;
+                    mDay = dayOfMonth;
+                    updateDisplay();
+                    ShowHistory();
+                    
+                }
+            };
 	public class HistoryArrayAdapter extends ArrayAdapter<String> {
 		HistoryArrayAdapter(Context context) {
 			super(context, R.layout.history_listview, R.id.history_listview_address, addr_array);
@@ -123,14 +144,46 @@ public class HistoryActivity extends KeepInTouchActivity implements OnClickListe
 		spn1.setAdapter(adapter);
 		history = (ListView)findViewById(R.id.listViewHistory);
 		geo = new GetGeocode(getApplicationContext());
+		setDate = (Button)findViewById(R.id.SetDate);
+
+		// get the current date
+        final Calendar c = Calendar.getInstance();
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH);
+        mDay = c.get(Calendar.DAY_OF_MONTH);
 	}
 	
 	protected void onDestroy() {
 		storageDB.close();
 		super.onDestroy();
 	}
-	
-	public void onShowHistory(View v) {
+
+	// updates the date in the TextView
+    private void updateDisplay() {
+    	setDate.setText(
+            new StringBuilder()
+                    // Month is 0 based so add 1
+                    .append(mMonth + 1).append("-")
+                    .append(mDay).append("-")
+                    .append(mYear).append(" "));
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+        case 0:
+            return new DatePickerDialog(this,
+                        mDateSetListener,
+                        mYear, mMonth, mDay);
+        }
+        return null;
+    }
+    
+	public void onSetDate(View v) {
+		showDialog(0);
+	}
+
+	public void ShowHistory() {
 		// TODO Auto-generated method stub
 		cancelHistory = false;
 		dialog = new ProgressDialog(this);
@@ -146,8 +199,7 @@ public class HistoryActivity extends KeepInTouchActivity implements OnClickListe
 		Thread t = new Thread() {
 			public void run() {
 				Message msg = new Message();
-				DatePicker datetime = (DatePicker)findViewById(R.id.HistorydatePicker);
-				Date epochDate = new Date(datetime.getYear() - 1900, datetime.getMonth(), datetime.getDayOfMonth());
+				Date epochDate = new Date(mYear - 1900, mMonth, mDay);
 				String starttime = String.valueOf(epochDate.getTime()/1000);
 				String endtime = String.valueOf((epochDate.getTime()/1000)+86400);		
 				StorageDB storageDB = new StorageDB(HistoryActivity.this);				
