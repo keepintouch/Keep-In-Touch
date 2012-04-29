@@ -77,17 +77,27 @@ public class MainActivity extends KeepInTouchActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.menuUpdate) {
 			// Start up the Polling Service
-			if (!isPollServiceRunning()) {
-				StartPollService("UPDATE");
-				Toast.makeText(getApplicationContext(), "Manual Location Update", Toast.LENGTH_LONG).show();
+			if (isNetworkAvailable()) {
+				if (!isPollServiceRunning()) {
+					StartPollService("UPDATE");
+					Toast.makeText(getApplicationContext(), "Manual Location Update", Toast.LENGTH_LONG).show();
+				}
+				else
+				{ Toast.makeText(getApplicationContext(), "Another Update Is Already Running...", Toast.LENGTH_LONG).show(); }
 			}
-			else
-			{ Toast.makeText(getApplicationContext(), "Another Update Is Already Running...", Toast.LENGTH_LONG).show(); }	        
+			else {
+				Toast.makeText(getApplicationContext(), "Network Not Available", Toast.LENGTH_LONG).show();
+			}
 		}
 		else if (item.getItemId() == R.id.menuPrefs) {
 			// Open Preferences Screen
-			Intent myIntent = new Intent(MainActivity.this, PreferencesActivity.class);
-			startActivity(myIntent);
+			if (isNetworkAvailable()) {
+				Intent myIntent = new Intent(MainActivity.this, PreferencesActivity.class);
+				startActivity(myIntent);
+			}
+			else {
+				Toast.makeText(getApplicationContext(), "Network Not Available", Toast.LENGTH_LONG).show();
+			}
 		}
 		// Consume the selection event.
 		return true;

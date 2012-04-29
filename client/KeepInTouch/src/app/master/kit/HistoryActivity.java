@@ -56,7 +56,12 @@ public class HistoryActivity extends KeepInTouchActivity implements OnClickListe
                     mMonth = monthOfYear;
                     mDay = dayOfMonth;
                     updateDisplay();
-                    ShowHistory();
+                    if (isNetworkAvailable()) {
+                    	ShowHistory();
+                    }
+                    else {
+                    	Toast.makeText(getApplicationContext(), "Network Not Available", Toast.LENGTH_LONG).show();
+                    }
                     
                 }
             };

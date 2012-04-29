@@ -5,8 +5,11 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 import app.master.kit.FriendsActivity;
 import app.master.kit.LocationMapActivity;
 
@@ -40,6 +43,15 @@ public abstract class KeepInTouchActivity extends Activity {
 
 	protected void onResume() {
 		super.onResume();
+	}
+
+	protected boolean isNetworkAvailable() {
+		// Test if any network is available for use, or if they are all unavailable
+		// Requires:     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	    ConnectivityManager connectivityManager 
+	          = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+	    return activeNetworkInfo != null;
 	}
 
 	// Service Checker 
@@ -81,8 +93,13 @@ public abstract class KeepInTouchActivity extends Activity {
 	}
 
 	public void onMap(View v) {
-		Intent myIntent = new Intent(this, LocationMapActivity.class);
-		startActivity(myIntent);
+		if (isNetworkAvailable()) {
+			Intent myIntent = new Intent(this, LocationMapActivity.class);
+			startActivity(myIntent);
+		}
+		else {
+			Toast.makeText(getApplicationContext(), "Network Not Available", Toast.LENGTH_LONG).show();
+		}
 	}
 
 	public void onPOI(View v) {

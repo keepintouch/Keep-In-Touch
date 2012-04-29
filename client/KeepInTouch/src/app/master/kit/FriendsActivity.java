@@ -29,6 +29,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 public class FriendsActivity extends KeepInTouchActivity implements OnClickListener {
 	private ListView friends;
 	private boolean receiverRegistered = false;
+	private boolean networkAvailable = true;
 	private String deleteID;
 	GetGeocode geo;
 	ProgressDialog dialog;
@@ -46,6 +47,7 @@ public class FriendsActivity extends KeepInTouchActivity implements OnClickListe
 			mMemberIDIndex = c.getColumnIndex(StorageDB.FRIENDS_COL_MEMBERID);
 			mNameIndex = c.getColumnIndex(StorageDB.FRIENDS_COL_NICKNAME);
 			mInflater = LayoutInflater.from(context);
+			networkAvailable = isNetworkAvailable();
 		}
 
 		private String getGeocoderData(String locationID, String lat, String lon) {
@@ -78,7 +80,12 @@ public class FriendsActivity extends KeepInTouchActivity implements OnClickListe
 					if (geo_addr.equals("")) {
 						// If no geocode data stored, then do a lookup
 						String id = cursorL.getString(cursorL.getColumnIndex(StorageDB.LOCATIONS_COL_ID));
-						geo_addr = getGeocoderData(id, lat, lon);
+						if (networkAvailable) {
+							geo_addr = getGeocoderData(id, lat, lon);
+						}
+						else {
+							geo_addr = "Geo Lookup Failed - No Network";
+						}
 					}
 					if (lat.length() > 11) { lat = lat.substring(0,11); }
 					if (lon.length() > 11) { lon = lon.substring(0,11); }
@@ -245,13 +252,23 @@ public class FriendsActivity extends KeepInTouchActivity implements OnClickListe
 	};
 
 	public void onAddFriend(View v) {
-		Intent myIntent = new Intent(this, FriendRequestActivity.class);
-		startActivity(myIntent);
+		if (isNetworkAvailable()) {
+			Intent myIntent = new Intent(this, FriendRequestActivity.class);
+			startActivity(myIntent);
+		}
+		else {
+			Toast.makeText(getApplicationContext(), "Network Not Available", Toast.LENGTH_LONG).show();
+		}
 	}
 
 	public void onViewFriendRequests(View v) {
-		Intent myIntent = new Intent(this, FriendRequestReceivedActivity.class);
-		startActivity(myIntent);
+		if (isNetworkAvailable()) {
+			Intent myIntent = new Intent(this, FriendRequestReceivedActivity.class);
+			startActivity(myIntent);
+		}
+		else {
+			Toast.makeText(getApplicationContext(), "Network Not Available", Toast.LENGTH_LONG).show();
+		}
 	}
 
 	
