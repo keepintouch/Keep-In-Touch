@@ -13,6 +13,8 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,16 +52,6 @@ public class FriendsActivity extends KeepInTouchActivity implements OnClickListe
 			networkAvailable = isNetworkAvailable();
 		}
 
-		private String getGeocoderData(String locationID, String lat, String lon) {
-			String[] retval = geo.getAddress(lat, lon);
-			if (retval[0].equals("1")) {
-				ContentValues values = new ContentValues();
-				values.put(StorageDB.LOCATIONS_COL_GEOCODE, retval[1]);
-				storageDB.updateLocations(locationID, values);
-			}
-			return retval[1];
-		}
-
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
 			TextView name=(TextView) view.findViewById(R.id.friends_listview_name);
@@ -77,16 +69,9 @@ public class FriendsActivity extends KeepInTouchActivity implements OnClickListe
 					String geo_addr = cursorL.getString(cursorL.getColumnIndex(StorageDB.LOCATIONS_COL_GEOCODE));
 					lat = cursorL.getString(cursorL.getColumnIndex(StorageDB.LOCATIONS_COL_LAT));
 					lon = cursorL.getString(cursorL.getColumnIndex(StorageDB.LOCATIONS_COL_LON));
-					if (geo_addr.equals("")) {
-						// If no geocode data stored, then do a lookup
-						String id = cursorL.getString(cursorL.getColumnIndex(StorageDB.LOCATIONS_COL_ID));
-						if (networkAvailable) {
-							geo_addr = getGeocoderData(id, lat, lon);
-						}
-						else {
-							geo_addr = "Geo Lookup Failed - No Network";
-						}
-					}
+					// We no longer do geocode lookups here, so that there are no delays on startup
+					// Later we do a geocode lookup via a background thread and then a handler causes
+					// our listview to refresh
 					if (lat.length() > 11) { lat = lat.substring(0,11); }
 					if (lon.length() > 11) { lon = lon.substring(0,11); }
 					display_addr = geo_addr+"\n"+lat+","+lon;
@@ -129,15 +114,6 @@ public class FriendsActivity extends KeepInTouchActivity implements OnClickListe
 	}
 
 	public void onCreate(Bundle savedInstanceState) {
-		dialog = new ProgressDialog(this);
-		dialog.setMessage("Getting Locations of Friends...");
-		dialog.setCancelable(false);
-		dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		});
-		dialog.show();
 		try {
 			storageDB.close();
 		} catch (NullPointerException e)
@@ -207,9 +183,6 @@ public class FriendsActivity extends KeepInTouchActivity implements OnClickListe
 
 	public void onStart() {
 		LoadFriends();
-		if (dialog.isShowing()) {
-			dialog.dismiss();					
-		}
 		super.onStart();
 	}
 
@@ -222,9 +195,69 @@ public class FriendsActivity extends KeepInTouchActivity implements OnClickListe
 		}
 		else {
 			Toast.makeText(getApplicationContext(), "Database ERROR!", Toast.LENGTH_LONG).show();
-		}		
+		}
+		// If the network is available, then try and do a geocode lookup in a separate thread
+		// for each of the Locations table entries.
+		if (networkAvailable) {
+			Thread t = new Thread() {
+				public void run() {
+					Message msg = new Message();
+					StorageDB storageDB = new StorageDB(FriendsActivity.this);
+					Cursor cursor = storageDB.cursorSelectAllLocations();
+					boolean updated_geocode = false;
+					if (cursor != null) {
+						if (cursor.getCount() > 0) {
+							String lat = "";
+							String lon = "";
+							boolean more_entries = cursor.moveToFirst();
+							while (more_entries) {
+								String geo_addr = cursor.getString(cursor.getColumnIndex(StorageDB.LOCATIONS_COL_GEOCODE));
+								lat = cursor.getString(cursor.getColumnIndex(StorageDB.LOCATIONS_COL_LAT));
+								lon = cursor.getString(cursor.getColumnIndex(StorageDB.LOCATIONS_COL_LON));
+								if (geo_addr.equals("")) {
+									// If no geocode data stored, then do a lookup
+									String id = cursor.getString(cursor.getColumnIndex(StorageDB.LOCATIONS_COL_ID));
+									String[] retval = geo.getAddress(lat, lon);
+									if (retval[0].equals("1")) {
+										ContentValues values = new ContentValues();
+										values.put(StorageDB.LOCATIONS_COL_GEOCODE, retval[1]);
+										storageDB.updateLocations(id, values);
+										updated_geocode = true;
+									}
+									geo_addr = retval[1];
+								}
+								more_entries = cursor.moveToNext();
+							}
+						}
+					}
+					storageDB.close();
+					if (updated_geocode) {
+						msg.what = 1;
+						myThreadMessageHandler.sendMessage(msg);
+					}
+					
+				}
+			};
+			t.start();
+		}
+		else {
+			Toast.makeText(getApplicationContext(), "Network Not Available", Toast.LENGTH_LONG).show();
+		}
+
 	}
 	
+	Handler myThreadMessageHandler = new Handler() {
+		public void handleMessage(Message msg) {
+			if (msg.what == 1) {
+				Cursor cursor = storageDB.cursorSelectAllFriends();
+				if (cursor != null) {
+					cursor.moveToFirst();
+					CustomCursorAdapter f_adapter = new CustomCursorAdapter(FriendsActivity.this, cursor);
+					friends.setAdapter(f_adapter);
+				}	    		
+			}
+		}
+	};
 	
 	protected void onDestroy() {
 		storageDB.close();
